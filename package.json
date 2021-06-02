@@ -19,11 +19,8 @@
   "homepage": "https://github.com/VedantWankhade/janta-api#readme",
   "devDependencies": {
     "eslint": "^7.27.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^3.4.0",
     "faker": "^5.5.3",
-    "node-fetch": "^2.6.1",
-    "prettier": "^2.3.0"
+    "node-fetch": "^2.6.1"
   },
   "dependencies": {
     "apollo-server-express": "^2.25.0",
