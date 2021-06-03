@@ -1,12 +1,12 @@
 module.exports = {
-    newNote: async (parent, args, models) => await models.Note.create({
-        content: args.content,
+    newNote: async (_, { content }, models) => await models.Note.create({
+        content: content,
         author: 'Me'
     }),
-    deleteNote: async (parent, args, models) => {
+    deleteNote: async (_, { id }, models) => {
         let a;
         try {
-            a = await models.Note.findOneAndRemove({ _id: args.id });
+            a = await models.Note.findOneAndRemove({ _id: id });
             if (a === null)
                 return "ERROR: Note does not exist";
             return "Success";
@@ -14,13 +14,13 @@ module.exports = {
             return "ERROR: " + err.message;
         }
     },
-    updateNote: async (parent, args, models) => await models.Note.findOneAndUpdate(
+    updateNote: async (_, { id, content }, models) => await models.Note.findOneAndUpdate(
         {
-            _id: args.id
+            _id: id
         },
         {
             $set: {
-                content: args.content
+                content
             }
         },
         {
