@@ -12,6 +12,10 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
+// Api port
+const API_SERVER_PORT = process.env.API_SERVER_PORT || 4000;
+// Database url
+const DB_URL = process.env.DB_URL;
 
 // Get the user info from a JWT
 const getUser = token => {
@@ -24,18 +28,13 @@ const getUser = token => {
     }
 }
 
-// Api port
-const API_SERVER_PORT = process.env.API_SERVER_PORT || 4000;
-// Database url
-const DB_URL = process.env.DB_URL;
-
 db.connect(DB_URL);
 const app = express();
 // Apollo server for api
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    // Pass models to resolvers
+    // Whenever a request is made, extract user id from jwt token passed in http headers request and pass it along with models to resolvers
     context: ({ req}) => {
         // Get the user token from the headers
         const token = req.headers.authorization;
