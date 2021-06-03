@@ -15,6 +15,7 @@ module.exports = {
             console.error(err);
             console.log('Failed to connect to the database.');
         });
+        // Connected success message
         mongoose.connection.on('connected', () => console.log(`Successfully connected to the database ${DB_URL}`));
     },
     close: () => {
