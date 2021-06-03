@@ -22,9 +22,7 @@ const server = new ApolloServer({
     typeDefs,
     resolvers,
     // Pass models to resolvers
-    context: () => {
-        return { models }
-    }
+    context: () => models
 });
 
 app.get('/', (req, res) => res.send('GraphQL api server for JANTA'));
