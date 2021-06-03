@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+/*
+    From the GraphQL schema it looks like users store 'favorites' and 'notes', but it does NOT.
+    'favorites' and 'notes' are fetched from notes collection.
+*/
 const UserSchema = new mongoose.Schema(
     {
         username: {
