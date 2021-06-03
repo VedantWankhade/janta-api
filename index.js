@@ -39,6 +39,7 @@ const server = new ApolloServer({
         // Get the user token from the headers
         const token = req.headers.authorization;
         const user = getUser(token);
+        // Requests are made twice because CORS are not set up, that's why it is logging twice
         console.log(user);
         return { models, user }
     }

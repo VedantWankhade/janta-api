@@ -5,15 +5,24 @@ const { AuthenticationError, ForbiddenError } = require('apollo-server-express')
 require('dotenv').config();
 // To get gravatar url
 const gravatar = require('../util/gravatar');
+const mongoose = require('mongoose');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 module.exports = {
     // Create new note, generates 'createdAt' and 'updatedAt' timestamps
-    newNote: async (_, { content }, { models }) => await models.Note.create({
-        content: content,
-        author: 'Me'
-    }),
+    newNote: async (_, { content }, { models, user }) => {
+        // If no user in context, throw and authenitcation error
+        if (!user) {
+            throw new AuthenticationError("You must be signed in to create a note");
+        }
+        // Else create note w/ author as mongodb 'ObjectId(user.id)'
+        return await models.Note.create({
+            content: content,
+            // Reference the author's mongodb id
+            author: mongoose.Types.ObjectId(user.id)
+        })
+    },
     // Deletes note
     deleteNote: async (_, { id }, { models }) => {
         let a;
