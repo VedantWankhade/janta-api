@@ -10,12 +10,12 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 module.exports = {
     // Create new note, generates 'createdAt' and 'updatedAt' timestamps
-    newNote: async (_, { content }, models) => await models.Note.create({
+    newNote: async (_, { content }, { models }) => await models.Note.create({
         content: content,
         author: 'Me'
     }),
     // Deletes note
-    deleteNote: async (_, { id }, models) => {
+    deleteNote: async (_, { id }, { models }) => {
         let a;
         try {
             a = await models.Note.findOneAndRemove({ _id: id });
@@ -27,7 +27,7 @@ module.exports = {
         }
     },
     // Updates note, updates 'createdAt' timestamp
-    updateNote: async (_, { id, content }, models) => await models.Note.findOneAndUpdate(
+    updateNote: async (_, { id, content }, { models }) => await models.Note.findOneAndUpdate(
         {
             _id: id
         },
@@ -41,7 +41,7 @@ module.exports = {
         }
     ),
     // User authentication
-    signUp: async (_, { username, email, password }, models) => {
+    signUp: async (_, { username, email, password }, { models }) => {
         // Convert email to a more maintanable format
         email = email.trim().toLowerCase();
         // Hash the password
@@ -62,7 +62,7 @@ module.exports = {
             throw new Error('Error creating account');
         }
     },
-    signIn: async (_, { username, email, password }, models) => {
+    signIn: async (_, { username, email, password }, { models }) => {
         if (email) {
             // Convert email into format similiar to the one in DB
             email = email.trim().toLowerCase();

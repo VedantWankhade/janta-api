@@ -8,7 +8,21 @@ const resolvers = require('./resolvers');
 const db = require('./db');
 // Database models
 const models = require('./models');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// Get the user info from a JWT
+const getUser = token => {
+    if (token) {
+        try {
+            return jwt.verify(token, JWT_SECRET);
+        } catch (err) {
+            return new Error('Session invalid');
+        }
+    }
+}
 
 // Api port
 const API_SERVER_PORT = process.env.API_SERVER_PORT || 4000;
@@ -22,7 +36,13 @@ const server = new ApolloServer({
     typeDefs,
     resolvers,
     // Pass models to resolvers
-    context: () => models
+    context: ({ req}) => {
+        // Get the user token from the headers
+        const token = req.headers.authorization;
+        const user = getUser(token);
+        console.log(user);
+        return { models, user }
+    }
 });
 
 app.get('/', (req, res) => res.send('GraphQL api server for JANTA'));
