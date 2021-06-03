@@ -33,6 +33,8 @@
     "graphql-depth-limit": "^1.1.0",
     "graphql-iso-date": "^3.6.1",
     "graphql-validation-complexity": "^0.4.2",
+    "jsonwebtoken": "^8.5.1",
+    "md5": "^2.3.0",
     "mongoose": "^5.12.12",
     "nodemon": "^2.0.7"
   }
