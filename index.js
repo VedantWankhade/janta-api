@@ -1,19 +1,15 @@
 const express = require('express');
 const { ApolloServer, gql } = require('apollo-server-express');
+// For connecting to the database
 const db = require('./db');
+// Database models
+const models = require('./models');
 require('dotenv').config();
 
 // Api port
 const API_SERVER_PORT = process.env.API_SERVER_PORT || 4000;
 // Database url
 const DB_URL = process.env.DB_URL;
-
-// Temporary in memory data for notes list
-let notes = [
-    { id: '1', content: 'Note by A', author: 'A' },
-    { id: '2', content: 'Note by B', author: 'B' },
-    { id: '3', content: 'Not eby C', author: 'C' }
-];
 
 // GraphQL schema
 const typeDefs = gql`
@@ -24,7 +20,7 @@ const typeDefs = gql`
     }
     
     type Query {
-        hello: String
+        about: String
         notes: [Note!]!
         note(id: ID!): Note!
     }
@@ -37,20 +33,15 @@ const typeDefs = gql`
 // GraphQL query resolver object
 const resolvers = {
     Query: {
-        hello: () => 'Hello, World!',
-        notes: () => notes,
-        note: (parent, args) => notes.find(note => note.id === args.id)
+        about: () => 'JANTA GraphQL api v1.0.0',
+        notes: async () => await models.Note.find(),
+        note: async (parent, args) => models.Note.findById(args.id)
     },
     Mutation: {
-        newNote: (parent, args) => {
-            let newNote = {
-                id: String(notes.length + 1),
-                content: args.content,
-                author: "Me"
-            };
-            notes.push(newNote);
-            return newNote;
-        }
+        newNote: async (parent, args) => await models.Note.create({
+            content: args.content,
+            author: 'Me'
+        })
     }
 }
 
