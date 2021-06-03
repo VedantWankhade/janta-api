@@ -24,6 +24,9 @@ module.exports = gql`
         notes: [Note!]!
         # Returns a note for given 'id' == '_id'
         note(id: ID!): Note!
+        users: [User!]!
+        user(username: String!): User
+        me: User!
     }
     type Mutation {
         # Creates new note, generates 'createdAt' and updatedAt' timestamps

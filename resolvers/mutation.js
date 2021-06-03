@@ -24,31 +24,57 @@ module.exports = {
         })
     },
     // Deletes note
-    deleteNote: async (_, { id }, { models }) => {
-        let a;
+    deleteNote: async (_, { id }, { models, user }) => {
+        // if not a user, throw and authentication error
+        if (!user) {
+            throw new AuthenticationError('You must be signed in to delete a note');
+        }
+        // find the note
+        const note = await models.Note.findById(id);
+        if (!note) {
+            throw new Error('Note does not exist');
+        }
+        // If the note does not exists or note owner and current user don't match, throw a forbidden error
+        if (note && String(note.author) !== user.id) {
+            throw new ForbiddenError(`You don't have permissions to delete the note`);
+        }
         try {
-            a = await models.Note.findOneAndRemove({ _id: id });
-            if (a === null)
-                return "ERROR: Note does not exist";
+            // Everything fine, remove the note
+            await note.remove();
             return "Success";
         } catch(err) {
             return "ERROR: " + err.message;
         }
     },
     // Updates note, updates 'createdAt' timestamp
-    updateNote: async (_, { id, content }, { models }) => await models.Note.findOneAndUpdate(
-        {
-            _id: id
-        },
-        {
-            $set: {
-                content
-            }
-        },
-        {
-            new: true
+    updateNote: async (_, { id, content }, { models, user }) => {
+        // If not a user, throw an authentication error
+        if (!user) {
+            throw new AuthenticationError('You must be signed in to update a note');
         }
-    ),
+        // find the note
+        const note = await models.Note.findById(id);
+        if (!note) {
+            throw new Error('Note does not exist')
+        }
+        if (note && String(note.author) !== user.id) {
+            throw new ForbiddenError(`You don't have permissions to update the note`);
+        }
+        // Update the note and return
+        return await models.Note.findOneAndUpdate(
+            {
+                _id: id
+            },
+            {
+                $set: {
+                    content
+                }
+            },
+            {
+                new: true
+            }
+        );
+    },
     // User authentication
     signUp: async (_, { username, email, password }, { models }) => {
         // Convert email to a more maintanable format
