@@ -2,11 +2,18 @@ const { gql } = require('apollo-server-express');
 
 module.exports = gql`
     scalar DateTime
+    type User {
+        id: ID!
+        username: String!
+        email: String!
+        avatar: String
+        notes: [Note!]!
+    }
     type Note {
         # 'id' is generated and handled by mongoose as '_id' and mapped to 'id' when retrieving
         id: ID!
         content: String!
-        author: String!
+        author: User!
         # 'createdAt' and 'updatedAt' are generated and handled by mongoose (ISO Date format)
         createdAt: DateTime!
         updatedAt: DateTime!
@@ -24,5 +31,8 @@ module.exports = gql`
         # Updates note, updates 'updatedAt' timestamp
         updateNote(id: ID!, content: String!): Note!
         deleteNote(id: ID!): String!
+        # User authentication
+        signUp(username: String!, email: String!, password: String!): String!
+        signIn(username: String, email: String, password: String!): String!
     }
 `;
