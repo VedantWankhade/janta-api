@@ -1,9 +1,12 @@
 const express = require('express');
 const { ApolloServer, gql } = require('apollo-server-express');
+const db = require('./db');
+require('dotenv').config();
 
 // Api port
-const PORT = process.env.PORT || 4000;
-const app = express();
+const API_SERVER_PORT = process.env.API_SERVER_PORT || 4000;
+// Database url
+const DB_URL = process.env.DB_URL;
 
 // Temporary in memory data for notes list
 let notes = [
@@ -51,10 +54,13 @@ const resolvers = {
     }
 }
 
+db.connect(DB_URL);
+
+const app = express();
 // Apollo server for api
 const server = new ApolloServer({ typeDefs, resolvers });
 
 app.get('/', (req, res) => res.send('Hello World!!!!!'));
 server.applyMiddleware({ app, path:'/api' });
 
-app.listen(PORT, () => console.log(`GraphQL server running at http://localhost:${PORT}${server.graphqlPath}`));
+app.listen(API_SERVER_PORT, () => console.log(`GraphQL server running at http://localhost:${API_SERVER_PORT}${server.graphqlPath}`));
