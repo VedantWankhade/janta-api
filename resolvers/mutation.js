@@ -75,6 +75,50 @@ module.exports = {
             }
         );
     },
+    toggleFavorite: async (_, { id }, { models, user }) => {
+        // If no user, auth error
+        if (!user) {
+            throw new AuthenticationError('You must be signed in to favorite the note');
+        }
+        // Check if the user has already favorited the note
+        let noteCheck = await models.Note.findById(id);
+        const hasUser = noteCheck.favoritedBy.indexOf(user.id);
+        // If the user exists in favoritedBy list
+        // remove them from the list and reduce the favioriteCount by 1
+        if (hasUser >= 0) {
+            return await models.Note.findByIdAndUpdate(
+                id,
+                {
+                    $pull: {
+                        favoritedBy: mongoose.Types.ObjectId(user.id)
+                    },
+                    $inc: {
+                        favoriteCount: -1
+                    }
+                },
+                {
+                    new: true
+                }
+            );
+        } else {
+            // If user not in list
+            // add them and increment favoriteCount by 1
+            return await models.Note.findByIdAndUpdate(
+                id,
+                {
+                    $push: {
+                        favoritedBy: mongoose.Types.ObjectId(user.id)
+                    },
+                    $inc: {
+                        favoriteCount: 1
+                    }
+                },
+                {
+                    new: true
+                }
+            );
+        }
+    },
     // User authentication
     signUp: async (_, { username, email, password }, { models }) => {
         // Convert email to a more maintanable format

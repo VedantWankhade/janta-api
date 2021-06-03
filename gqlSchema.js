@@ -8,6 +8,7 @@ module.exports = gql`
         email: String!
         avatar: String
         notes: [Note!]!
+        favorites: [Note!]!
     }
     type Note {
         # 'id' is generated and handled by mongoose as '_id' and mapped to 'id' when retrieving
@@ -17,6 +18,8 @@ module.exports = gql`
         # 'createdAt' and 'updatedAt' are generated and handled by mongoose (ISO Date format)
         createdAt: DateTime!
         updatedAt: DateTime!
+        favoriteCount: Int!
+        favoritedBy: [User!]
     }
     type Query {
         about: String
@@ -34,6 +37,7 @@ module.exports = gql`
         # Updates note, updates 'updatedAt' timestamp
         updateNote(id: ID!, content: String!): Note!
         deleteNote(id: ID!): String!
+        toggleFavorite(id: ID!): Note!
         # User authentication
         signUp(username: String!, email: String!, password: String!): String!
         signIn(username: String, email: String, password: String!): String!
