@@ -17,7 +17,7 @@ require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 // Api port
-const API_SERVER_PORT = process.env.API_SERVER_PORT || 4000;
+const API_SERVER_PORT = process.env.PORT || 4000;
 // Database url
 const DB_URL = process.env.DB_URL;
 
