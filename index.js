@@ -11,6 +11,8 @@ const models = require('./models');
 const jwt = require('jsonwebtoken');
 const helmet = require('helmet');
 const cors = require('cors');
+const depthLimit = require('graphql-depth-limit');
+const { createComplexityLimitRule } = require('graphql-validation-complexity');
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -47,6 +49,7 @@ app.use(cors());
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    validationRules: [depthLimit(5), createComplexityLimitRule(1000)],
     // Whenever a request is made, extract user id from jwt token passed in http headers request and pass it along with models to resolvers
     context: ({ req}) => {
         // Get the user token from the headers
