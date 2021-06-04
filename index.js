@@ -9,6 +9,8 @@ const db = require('./db');
 // Database models
 const models = require('./models');
 const jwt = require('jsonwebtoken');
+const helmet = require('helmet');
+const cors = require('cors');
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -30,6 +32,17 @@ const getUser = token => {
 
 db.connect(DB_URL);
 const app = express();
+// apply helmet middleware
+app.use(helmet({
+    /*
+        There will be an issue if contentSecurityPolicy is set to true(default)
+        Refer: https://github.com/graphql/graphql-playground/issues/1283#issuecomment-703631091
+    */
+    contentSecurityPolicy: false
+}));
+// use CORS on app
+app.use(cors());
+
 // Apollo server for api
 const server = new ApolloServer({
     typeDefs,
@@ -39,7 +52,7 @@ const server = new ApolloServer({
         // Get the user token from the headers
         const token = req.headers.authorization;
         const user = getUser(token);
-        // Requests are made twice because CORS are not set up, that's why it is logging twice
+        // Requests are made twice because CORS are set up, that's why it is logging twice
         console.log(user);
         return { models, user }
     }
